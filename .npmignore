@@ -1,5 +1,2 @@
-test
-
-*.key
-*.pem
-*.crt
+scripts/
+example/

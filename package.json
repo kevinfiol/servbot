@@ -1,26 +1,37 @@
 {
-  "name": "servor",
-  "version": "4.0.2",
-  "description": "A dependency free dev server for single page app development",
-  "repository": "lukejacksonn/servor",
-  "main": "./servor.js",
-  "bin": {
-    "servor": "./cli.js"
-  },
-  "keywords": [
-    "server",
-    "https",
-    "livereload",
-    "spa"
-  ],
-  "scripts": {
-    "start": "sudo node cli tests/example --reload --browse --secure --static --module",
-    "cleanup": "rm -f servor.key servor.crt",
-    "test": "npm run cleanup && cd tests && node index.js"
-  },
-  "author": "Luke Jackson <lukejacksonn@gmail.com>",
-  "license": "MIT",
-  "devDependencies": {
-    "puppeteer": "^3.0.4"
-  }
+    "name": "servbot",
+    "version": "0.1.1",
+    "author": "kevinfiol",
+    "license": "MIT",
+    "description": "A small dev server script for local static site development",
+    "type": "module",
+    "repository": "kevinfiol/servbot",
+    "main": "dist/servbot.cjs",
+    "module": "dist/servbot.js",
+    "types": "index.d.ts",
+    "umd:name": "servbot",
+    "scripts": {
+        "static": "node ./scripts/runStaticExample.js",
+        "spa": "node ./scripts/runSpaExample.js",
+        "test": "node test.js",
+        "build": "bundt index.js"
+    },
+    "engines": {
+        "node": ">=12.x"
+    },
+    "files": [
+        "*.d.ts",
+        "dist"
+    ],
+    "keywords": [
+        "server",
+        "http",
+        "https",
+        "localhost"
+    ],
+    "devDependencies": {
+        "bundt": "^1.1.5",
+        "navaid": "^1.2.0",
+        "watchlist": "^0.3.1"
+    }
 }
