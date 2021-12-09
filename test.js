@@ -9,24 +9,58 @@ let res;
 let passes = 0;
 let failures = 0;
 
-// const server = servbot({
-//   root: './example/',
-//   reload: true,
-//   fallback: 'index.html'
-// });
+const PORT = 8097;
 
-// server.listen(8989);
+const staticOpts = {
+    root: './example/static/',
+    reload: false,
+    fallback: ''
+};
 
+const spaOpts = {
+    root: './example/spa/',
+    reload: false,
+    fallback: 'index.html'
+};
 
-console.log(`Tests Passed ✓: ${passes}`);
-console.warn(`Tests Failed ✗: ${failures}`);
+let server;
 
-if (failures) logFail(`\n✗ Tests failed with ${failures} failing tests.`);
-else logPass(`\n✓ All ${passes} tests passed.`)
+const start = (opts) => {
+    server = servbot(opts);
+    server.listen(PORT);
+};
 
-function test(label, cb) {
+const close = () => {
+    server.close();
+}
+
+await suite('servbot test suite', [
+    test('Start static server', () => {
+        start(staticOpts);
+        close();
+    }),
+
+    test('Start spa server', () => {
+        start(spaOpts);
+        close();
+    }),
+]);
+
+async function suite(name, tests) {
+    console.log(`\x1b[1mSuite: ${name}\x1b[0m`);
+    await Promise.all(tests);
+
+    // Tests Finished
+    console.log(`Tests Passed ✓: ${passes}`);
+    console.warn(`Tests Failed ✗: ${failures}`);
+
+    if (failures) logFail(`\n✗ Tests failed with ${failures} failing tests.`);
+    else logPass(`\n✓ All ${passes} tests passed.`)
+}
+
+async function test(label, cb) {
     try {
-        cb();
+        await cb();
         passes += 1;
     } catch(e) {
         failures += 1;

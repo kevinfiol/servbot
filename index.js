@@ -44,6 +44,7 @@ export default ({ root = '.', reload = false, fallback = '', credentials = null 
         throw Error(`[servbot] Invalid root directory: ${root}`);
     }
 
+    let internalPort = 5000;
     const protocol = credentials ? 'https://' : 'http://';
     const htmlToAppend = reload ? RELOAD_HTML : '';
     const clients = [];
@@ -103,12 +104,13 @@ export default ({ root = '.', reload = false, fallback = '', credentials = null 
 
     return {
         listen: (port) => {
-            log(`Server: ${protocol}localhost:${port}`);
-            server.listen(port);
+            internalPort = port || internalPort;
+            log(`Server started: ${protocol}localhost:${internalPort}`);
+            server.listen(internalPort);
         },
 
         close: (callback) => {
-            log(`Server closed: ${protocol}localhost:${port}`);
+            log(`Server closed: ${protocol}localhost:${internalPort}`);
             server.close(callback);
         },
 
@@ -122,13 +124,12 @@ export default ({ root = '.', reload = false, fallback = '', credentials = null 
 };
 
 function routeResponse(res, pathname, root, fallback, htmlToAppend) {
-    const route = join(root, fallback);
+    const fallbackPath = join(root, fallback);
 
-    readFile(route, 'binary', (err, file) => {
+    readFile(fallbackPath, 'binary', (err, file) => {
         if (err) return errorResponse(res, pathname, 500);
         const status = pathname === '/' ? 200 : 301;
-        file += htmlToAppend;
-        fileResponse(res, pathname, status, file, 'html');
+        fileResponse(res, pathname, status, file, 'html', htmlToAppend);
     });
 }
 
