@@ -1,6 +1,6 @@
 {
     "name": "servbot",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "author": "kevinfiol",
     "license": "MIT",
     "description": "A small dev server script for local static site development",
