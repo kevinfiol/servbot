@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="/css/bamboo.min.css">
+      <title>servbot spa example</title>
+  </head>
+  <body>
+    <h1>SPA example</h1>
+    <div id="app"></div>
+    <script src="/navaid.min.js"></script>
+    <script defer>
+      (() => {
+        const root = document.getElementById('app');
+
+        const router = navaid();
+
+        router
+          .on('/', () => {
+            root.innerHTML = '<h1>homepage</h1><a href="/about">about</a>';
+          })
+          .on('/about', () => {
+            root.innerHTML = '<h1>about page</h1><a href="/">home</a>';
+          });
+
+        router.run('/');
+        router.listen();
+      })();
+    </script>
+  </body>
+</html>

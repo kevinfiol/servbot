@@ -31,7 +31,6 @@
     ],
     "devDependencies": {
         "bundt": "^1.1.5",
-        "navaid": "^1.2.0",
         "watchlist": "^0.3.1"
     }
 }
