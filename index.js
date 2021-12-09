@@ -1,6 +1,6 @@
 import http from 'http';
 import https from 'https';
-import zlib from 'zlib';
+import { gzipSync } from 'zlib';
 import { URL } from 'url';
 import { readFile, existsSync, statSync } from 'fs';
 import { resolve, join } from 'path';
@@ -40,14 +40,14 @@ const RELOAD_HTML = `
  * @returns {ServbotServer} server
  */
 export default ({ root = '.', reload = false, fallback = '', credentials = null }) => {
-    const protocol = credentials ? 'https://' : 'http://';
-    let clients = [];
-
     root = resolve(root);
     if (!existsSync(root) || !statSync(root).isDirectory()) {
-        log(`Invalid root directory: ${root}`, true);
-        process.exit();
+        throw Error(`[servbot] Invalid root directory: ${root}`);
     }
+
+    const protocol = credentials ? 'https://' : 'http://';
+    const htmlToAppend = reload ? RELOAD_HTML : '';
+    const clients = [];
 
     const createServer = credentials
         ? (listener) => https.createServer(credentials, listener)
@@ -56,6 +56,7 @@ export default ({ root = '.', reload = false, fallback = '', credentials = null 
     const server = createServer((req, res) => {
         const reqPath = decodeURI(req.url);
         const url = new URL(reqPath, protocol + req.headers.host);
+
         let { pathname } = url;
 
         if (reload && pathname == EVENT_SOURCE) {
@@ -72,14 +73,13 @@ export default ({ root = '.', reload = false, fallback = '', credentials = null 
 
         res.setHeader('Access-Control-Allow-Origin', '*');
 
-        const isDirectoryRoute = pathname.slice(-1) === '/';
-
         if (pathname.split('/').pop().indexOf('.') < 0) {
-            if (fallback && !isDirectoryRoute) {
+            if (fallback) {
                 // dynamic route
-                return routeResponse(res, pathname, root, fallback, reload ? RELOAD_HTML : '');
+                return routeResponse(res, pathname, root, fallback, htmlToAppend);
             }
 
+            const isDirectoryRoute = pathname.slice(-1) === '/';
             pathname += (isDirectoryRoute ? 'index.html' : '/index.html');
         }
 
@@ -93,13 +93,12 @@ export default ({ root = '.', reload = false, fallback = '', credentials = null 
         readFile(uri, 'binary', (err, file) => {
             return err
                 ? errorResponse(res, pathname, 500)
-                : fileResponse(res, pathname, 200, file, ext, reload ? RELOAD_HTML : '');
+                : fileResponse(res, pathname, 200, file, ext, htmlToAppend);
         });
     });
 
     process.on('SIGINT', () => {
         clients.map((res) => res.end());
-        clients = [];
         process.exit();
     });
 
@@ -115,11 +114,10 @@ export default ({ root = '.', reload = false, fallback = '', credentials = null 
         },
 
         reload: () => {
-            if (clients.length) {
-                const res = clients.pop();
-                res.write('event: message\ndata: reload\n\n\n');
-                res.end();
-            }
+            if (!clients.length) return;
+            const res = clients.pop();
+            res.write('event: message\ndata: reload\n\n\n');
+            res.end();
         }
     };
 };
@@ -130,7 +128,7 @@ function routeResponse(res, pathname, root, fallback, htmlToAppend) {
     readFile(route, 'binary', (err, file) => {
         if (err) return errorResponse(res, pathname, 500);
         const status = pathname === '/' ? 200 : 301;
-        file = baseDoc(pathname) + file + htmlToAppend;
+        file += htmlToAppend;
         fileResponse(res, pathname, status, file, 'html');
     });
 }
@@ -141,7 +139,7 @@ function fileResponse(res, pathname, status, file, ext, htmlToAppend) {
     if (GZIP_EXTS.includes(ext)) {
         if (ext === 'html' && htmlToAppend) file += htmlToAppend;
         res.setHeader('Content-Encoding', 'gzip');
-        file = zlib.gzipSync(Buffer.from(file, 'binary').toString('utf8'));
+        file = gzipSync(Buffer.from(file, 'binary').toString('utf8'));
         encoding = 'utf8';
     }
 
@@ -156,11 +154,6 @@ function errorResponse(res, pathname, status) {
     res.write(`${status}`);
     logServer(status, pathname);
     res.end();
-}
-
-function baseDoc(pathname = '') {
-    const base = join('/', pathname, '/');
-    return `<!doctype html><meta charset="utf-8"/><base href="${base}"/>`;
 }
 
 function log(message, error = false) {
