@@ -1,13 +1,76 @@
 # servbot
 
-A small dev server script for local static site development. Fork of [servor](https://github.com/lukejacksonn/servor). Experimental.
+A small wrapper around [http.Server](https://nodejs.org/api/http.html#class-httpserver) for local static site development. Fork of [servor](https://github.com/lukejacksonn/servor). Experimental.
+
+```js
+import servbot from 'servbot';
+
+const server = servbot({
+    root: './public/',
+    reload: true,
+    fallback: 'index.html'
+});
+
+server.listen(8080);
+```
+
+This is an opinionated fork with some intentional exclusions and smaller scope, and some ideas taken from [nativew/serve](https://github.com/nativew/serve).
+
+## Install
+
+```bash
+npm install servbot --save-dev
+```
+
+## Usage
+
+See types in [index.d.ts](/index.d.ts). servbot accepts a single argument, `ServbotOptions` and returns an instance of `ServbotServer`. See below for the default options.
+
+```js
+import servbot from 'servbot';
+
+const server = servbot({
+    // root: string
+    // Directory to serve. Relative from process.cwd().
+    root: '.',
+
+    // reload: boolean
+    // Flag to enable manual reload.
+    reload: false,
+
+    // fallback: string
+    // Filename to fallback to for single-page applications. Relative to `root`.
+    // Leaving this empty assumes you are not serving a single-page application
+    fallback: '',
+
+    // credentials: object
+    // TLS Credentials. Providing these enables an HTTPS server
+    // See https://nodejs.org/api/https.html#httpscreateserveroptions-requestlistener
+    credentials: null
+});
+
+// Pass port (number) to ServbotServer.listen
+server.listen(8080);
+
+// Close server from new connections
+// Essentially just a wrapper around https://nodejs.org/api/net.html#serverclosecallback
+server.close((err) => {
+    if (err) process.exit();
+})
+```
+
+## Using manual reload
+
+Instead of including a filewatcher to automatically reload your app on file changes, servbot includes a *manual* reload feature. Most modern front-end development build tools already include a built-in watch feature (esbuild, rollup, webpack, parcel, etc.) that can be leveraged with servbot. For an example with [rollup](https://rollupjs.org/guide/en/), see [here](/example/rollup.config.js).
+
+Outside of build tools, you can also use something like [cheap-watch](https://github.com/Conduitry/cheap-watch) or [watchlist](https://github.com/lukeed/watchlist). See below for an example using watchlist:
 
 ```js
 import servbot from 'servbot';
 import { watch } from 'watchlist';
 
 const server = servbot({
-    root: './example/',
+    root: './example/static/',
     reload: true,
     fallback: 'index.html'
 });
@@ -15,17 +78,14 @@ const server = servbot({
 server.listen(8080);
 
 (async() => {
-    await watch(['example'], async () => {
-        console.log('change detected! reloading...');
+    await watch(['./example/static/'], async () => {
         server.reload();
+        console.log('change detected! reloading...');
     });
 })();
 ```
 
-This is an opinionated fork of `servor` with some intentional exclusions and smaller scope, with some ideas taken from [nativew/serve](https://github.com/nativew/serve). See both of those projects if you need something more full-featured and mature.
+## To-Do
 
-## Install
-
-```bash
-npm install servbot --save-dev
-```
+* Tests
+* HTTP/2 support
