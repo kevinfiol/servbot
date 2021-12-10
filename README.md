@@ -1,6 +1,6 @@
 # servbot
 
-A small wrapper around [http.Server](https://nodejs.org/api/http.html#class-httpserver) for local static site development. Fork of [servor](https://github.com/lukejacksonn/servor). Experimental.
+A small dev server for local static site development. Essentially a wrapper around [http.Server](https://nodejs.org/api/http.html#class-httpserver). Fork of [servor](https://github.com/lukejacksonn/servor). Experimental.
 
 ```js
 import servbot from 'servbot';
@@ -24,14 +24,14 @@ npm install servbot --save-dev
 
 ## Usage
 
-See types in [index.d.ts](/index.d.ts). servbot accepts a single argument, `ServbotOptions` and returns an instance of `ServbotServer`. See below for the default options.
+See types in [index.d.ts](/index.d.ts). servbot accepts a single argument, `ServbotOptions`; and returns an instance of `ServbotServer`. See below for the default options.
 
 ```js
 import servbot from 'servbot';
 
 const server = servbot({
     // root: string
-    // Directory to serve. Relative from process.cwd().
+    // Directory to serve. Relative to process.cwd().
     root: '.',
 
     // reload: boolean
@@ -49,11 +49,11 @@ const server = servbot({
     credentials: null
 });
 
-// Pass port (number) to ServbotServer.listen
+// Start server on port 8080
 server.listen(8080);
 
 // Close server from new connections
-// Essentially just a wrapper around https://nodejs.org/api/net.html#serverclosecallback
+// https://nodejs.org/api/net.html#serverclosecallback
 server.close((err) => {
     if (err) process.exit();
 })
