@@ -29,8 +29,8 @@ export default {
         !production && {
             name: 'server',
             generateBundle() {
-                server.reload();
                 console.log('reloading servbot...');
+                server.reload();
             }
         }
     ]
