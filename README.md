@@ -56,7 +56,7 @@ server.listen(8080);
 // https://nodejs.org/api/net.html#serverclosecallback
 server.close((err) => {
     if (err) process.exit();
-})
+});
 ```
 
 ## Using manual reload
@@ -79,8 +79,8 @@ server.listen(8080);
 
 (async() => {
     await watch(['./example/static/'], async () => {
-        server.reload();
         console.log('change detected! reloading...');
+        server.reload();
     });
 })();
 ```
