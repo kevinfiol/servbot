@@ -2,10 +2,12 @@ lockfileVersion: 5.3
 
 specifiers:
   bundt: ^1.1.5
+  dedent-js: ^1.0.1
   watchlist: ^0.3.1
 
 devDependencies:
   bundt: 1.1.5
+  dedent-js: 1.0.1
   watchlist: 0.3.1
 
 packages:
@@ -27,6 +29,10 @@ packages:
 
   /commander/2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
+    dev: true
+
+  /dedent-js/1.0.1:
+    resolution: {integrity: sha1-vuX7fJ5yfYXf+iRZDRDsGrElUwU=}
     dev: true
 
   /kleur/4.1.4:
