@@ -59,7 +59,7 @@ server.close((err) => {
 });
 ```
 
-## Using manual reload
+### Using manual reload
 
 Instead of including a filewatcher to automatically reload your app on file changes, servbot includes a *manual* reload feature. Most modern front-end development build tools already include a built-in watch feature (esbuild, rollup, webpack, parcel, etc.) that can be leveraged with servbot. For an example with [rollup](https://rollupjs.org/guide/en/), see [here](/example/rollup.config.js).
 
