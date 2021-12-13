@@ -77,7 +77,7 @@ const server = servbot({
 
 server.listen(8080);
 
-(async() => {
+(async () => {
     await watch(['./example/static/'], async () => {
         console.log('change detected! reloading...');
         server.reload();
