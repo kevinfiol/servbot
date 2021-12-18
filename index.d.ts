@@ -2,7 +2,7 @@ type ServbotOptions = {
     root: string;
     reload: boolean;
     fallback: string;
-    credentials: Record<string, unknown> | null;
+    credentials?: Record<string, unknown>;
 };
 
 type ServbotServer = {

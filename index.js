@@ -21,24 +21,7 @@ const RELOAD_HTML = `
     </script>
 `;
 
-/**
- * @typedef {object} ServbotOptions
- * @property {string} root
- * @property {boolean} reload
- * @property {string} fallback
- * @property {Record<string, unknown> | null} credentials
- * 
- * @typedef {object} ServbotServer
- * @property {(port: number) => void} listen
- * @property {() => void} reload
- * @property {(callback: Function) => void} close
- */
-
-/**
- * @param {ServbotOptions} options
- * @returns {ServbotServer} server
- */
-export default ({ root = '.', reload = false, fallback = '', credentials = null }) => {
+export default ({ root = '.', reload = false, fallback = '', credentials }) => {
     root = resolve(root);
     if (!existsSync(root) || !statSync(root).isDirectory()) {
         throw Error(`[servbot] Invalid root directory: ${root}`);
