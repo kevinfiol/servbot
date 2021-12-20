@@ -46,7 +46,7 @@ const server = servbot({
     // credentials: object
     // TLS Credentials. Providing these enables an HTTPS server
     // See https://nodejs.org/api/https.html#httpscreateserveroptions-requestlistener
-    credentials: null
+    credentials: undefined
 });
 
 // Start server on port 8080
