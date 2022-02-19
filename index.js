@@ -21,13 +21,13 @@ const RELOAD_HTML = `
     </script>
 `;
 
-export default ({ root = '.', reload = false, fallback = '', credentials }) => {
+export default ({ root = '.', reload = false, fallback = '', ignores = [], credentials }) => {
     root = resolve(root);
     if (!existsSync(root) || !statSync(root).isDirectory()) {
         throw Error(`[servbot] Invalid root directory: ${root}`);
     }
 
-    let internalPort = 5000;
+    let internalPort = 8080;
     const protocol = credentials ? 'https://' : 'http://';
     const htmlToAppend = reload ? RELOAD_HTML : '';
     const clients = [];
@@ -56,12 +56,18 @@ export default ({ root = '.', reload = false, fallback = '', credentials }) => {
 
         res.setHeader('Access-Control-Allow-Origin', '*');
 
-        if (pathname.split('/').pop().indexOf('.') < 0) {
-            if (fallback) {
-                // dynamic route
-                return routeResponse(res, pathname, root, fallback, htmlToAppend);
-            }
+        const routeHasDot = pathname.split('/').pop().indexOf('.') >= 0;
+        const matchesIgnores = ignores.reduce((a, pattern) => a || pattern.test(pathname), false);
 
+        if (
+            (fallback && !routeHasDot) ||
+            (fallback && routeHasDot && (ignores.length && !matchesIgnores))
+        ) {
+            // SPA route
+            return routeResponse(res, pathname, root, fallback, htmlToAppend);
+        }
+
+        if (!routeHasDot) {
             const isDirectoryRoute = pathname.slice(-1) === '/';
             pathname += (isDirectoryRoute ? 'index.html' : '/index.html');
         }

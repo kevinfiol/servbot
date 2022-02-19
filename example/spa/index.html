@@ -18,10 +18,18 @@
 
         router
           .on('/', () => {
-            root.innerHTML = '<h1>homepage</h1><a href="/about">about</a>';
+            root.innerHTML = '<h1>homepage</h1><a href="/about">about</a><br/><a href="/tricky/route.js">tricky route</a>';
           })
           .on('/about', () => {
             root.innerHTML = '<h1>about page</h1><a href="/">home</a>';
+          })
+          .on('/tricky/route.js', () => {
+            root.innerHTML = `
+              <h1>tricky route</h1>
+              <a href="/">home</a>
+              <p>try navigating to this page from the URL bar instead, if it works, you'll get this page!</p>
+              <p>if it doesn't, you'll get a 404 and should probably use the \`ignores\` property</p>
+            `;
           });
 
         router.run('/');

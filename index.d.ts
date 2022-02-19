@@ -2,6 +2,7 @@ type ServbotOptions = {
     root: string;
     reload: boolean;
     fallback: string;
+    ignores: RegExp[];
     credentials?: Record<string, unknown>;
 };
 

@@ -43,6 +43,13 @@ const server = servbot({
     // Leaving this empty assumes you are not serving a single-page application
     fallback: '',
 
+    // ignores: RegExp[]
+    // *Only applicable when `fallback` is provided and `ignores` is not an empty array*
+    // A list of patterns to *not* route to your fallback
+    // Useful when you want to be able to route non-filetypes to your SPA ("/foo/routename.hi")
+    // But otherwise, want to "ignore" routes that should be static files ("/main.css", "/js/jquery.js")
+    ignores: [],
+
     // credentials: object
     // TLS Credentials. Providing these enables an HTTPS server
     // See https://nodejs.org/api/https.html#httpscreateserveroptions-requestlistener
@@ -87,5 +94,5 @@ server.listen(8080);
 
 ## To-Do
 
-* Expand Tests
+* Tests for SPA example
 * HTTP/2 support
