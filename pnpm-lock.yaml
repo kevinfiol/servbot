@@ -3,11 +3,13 @@ lockfileVersion: 5.3
 specifiers:
   bundt: ^1.1.5
   dedent-js: ^1.0.1
+  flitch: ^0.2.2
   watchlist: ^0.3.1
 
 devDependencies:
   bundt: 1.1.5
   dedent-js: 1.0.1
+  flitch: 0.2.2
   watchlist: 0.3.1
 
 packages:
@@ -33,6 +35,11 @@ packages:
 
   /dedent-js/1.0.1:
     resolution: {integrity: sha1-vuX7fJ5yfYXf+iRZDRDsGrElUwU=}
+    dev: true
+
+  /flitch/0.2.2:
+    resolution: {integrity: sha512-l31jUbme1O9Ffko5RKRSCqcl7DpE0lT3KwWRBohvV6qhE34z8sQOFiGO/7zqI33/scjZ9M4TAx0elLuH6XCjUQ==}
+    engines: {node: '>=14.8.x'}
     dev: true
 
   /kleur/4.1.4:
