@@ -2,7 +2,7 @@ import assert from 'assert';
 import { get } from 'http';
 import zlib from 'zlib';
 import dedent from 'dedent-js';
-import { test, run } from 'flitch';
+import { suite } from 'flitch';
 import servbot from './index.js';
 
 const PORT = 8097;
@@ -27,6 +27,8 @@ const close = () => {
     server.close();
     listening = false;
 };
+
+const test = suite('Servbot Tests');
 
 test('Start & stop static server smoke test', () => {
     start(staticOpts);
@@ -84,8 +86,7 @@ test('About page', async () => {
     close();
 });
 
-await run();
-// process.exit(0);
+test.run();
 
 async function gzipGet(host) {
     return new Promise((res, rej) => {

@@ -1,18 +1,24 @@
-lockfileVersion: 5.3
+lockfileVersion: 5.4
 
 specifiers:
   bundt: ^1.1.5
   dedent-js: ^1.0.1
-  flitch: ^0.2.3
+  flitch: ^0.4.10
   watchlist: ^0.3.1
 
 devDependencies:
   bundt: 1.1.5
   dedent-js: 1.0.1
-  flitch: 0.2.3
+  flitch: 0.4.10
   watchlist: 0.3.1
 
 packages:
+
+  /acorn/8.7.1:
+    resolution: {integrity: sha512-Xx54uLJQZ19lKygFXOWsscKUbsBZW0CPykPhVQdhIeIwrbPmJzqeASDInc8nKBnp/JT6igTs82qPXz069H8I/A==}
+    engines: {node: '>=0.4.0'}
+    hasBin: true
+    dev: true
 
   /buffer-from/1.1.2:
     resolution: {integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==}
@@ -37,8 +43,8 @@ packages:
     resolution: {integrity: sha1-vuX7fJ5yfYXf+iRZDRDsGrElUwU=}
     dev: true
 
-  /flitch/0.2.3:
-    resolution: {integrity: sha512-t9OElY1/eFWFju3lNAEzKNxGJsjABMgSKDaQ1C8IL/zbaebn8GFD6WUQfaZmEf36ImYtTWOavFTMx+mUMo4FRQ==}
+  /flitch/0.4.10:
+    resolution: {integrity: sha512-3WI9ZW/0yTYYLXOpXz961MBmXBnUrVLPY1DuHFG4gV+TlswyDXMq8+mj8i210AAjd5/l1iMLjwB9q3/tTewlVg==}
     engines: {node: '>=14.8.x'}
     dev: true
 
@@ -79,6 +85,7 @@ packages:
     engines: {node: '>=6.0.0'}
     hasBin: true
     dependencies:
+      acorn: 8.7.1
       commander: 2.20.3
       source-map: 0.6.1
       source-map-support: 0.5.21
