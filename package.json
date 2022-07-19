@@ -1,27 +1,29 @@
 {
     "name": "servbot",
-    "version": "0.2.1",
+    "version": "0.2.2",
     "author": "kevinfiol",
     "license": "MIT",
     "description": "A small dev server script for local static site development",
     "type": "module",
     "repository": "kevinfiol/servbot",
     "main": "dist/servbot.cjs",
-    "module": "dist/servbot.js",
+    "module": "index.js",
     "types": "index.d.ts",
     "umd:name": "servbot",
     "scripts": {
         "static": "node ./scripts/runStaticExample.js",
         "spa": "node ./scripts/runSpaExample.js",
         "test": "node test.js",
-        "build": "bundt index.js"
+        "build": "node ./scripts/transpile.js"
     },
     "engines": {
-        "node": ">=12.x"
+        "node": ">=12.x",
+        "pnpm": "7.5.1"
     },
     "files": [
         "*.d.ts",
-        "dist"
+        "dist",
+        "index.js"
     ],
     "keywords": [
         "servor",
@@ -31,9 +33,8 @@
         "localhost"
     ],
     "devDependencies": {
-        "bundt": "^1.1.5",
         "dedent-js": "^1.0.1",
-        "flitch": "^0.2.3",
+        "flitch": "^0.6.3",
         "watchlist": "^0.3.1"
     }
 }
