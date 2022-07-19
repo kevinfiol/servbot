@@ -1,2 +1,5 @@
 scripts/
 example/
+test.js
+pnpm-lock.yaml
+.node-version
