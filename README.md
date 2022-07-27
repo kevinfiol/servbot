@@ -1,6 +1,6 @@
 # servbot
 
-A small dev server for local static site development. Essentially a wrapper around [http.Server](https://nodejs.org/api/http.html#class-httpserver). Fork of [servor](https://github.com/lukejacksonn/servor). Experimental.
+A small dev server for local static site development. Essentially a wrapper around [http.Server](https://nodejs.org/api/http.html#class-httpserver). Fork of [servor](https://github.com/lukejacksonn/servor).
 
 ```js
 import servbot from 'servbot';
