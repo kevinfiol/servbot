@@ -21,7 +21,7 @@ const RELOAD_HTML = `
     </script>
 `;
 
-export default ({ root = '.', reload = false, fallback = '', ignores = [], credentials }) => {
+export default ({ root = '.', reload = false, fallback = '', ignores = [], credentials, verbose = true }) => {
     root = resolve(root);
     if (!existsSync(root) || !statSync(root).isDirectory()) {
         throw Error(`[servbot] Invalid root directory: ${root}`);
@@ -64,7 +64,7 @@ export default ({ root = '.', reload = false, fallback = '', ignores = [], crede
             (fallback && routeHasDot && (ignores.length && !matchesIgnores))
         ) {
             // SPA route
-            return routeResponse(res, pathname, root, fallback, htmlToAppend);
+            return routeResponse(res, pathname, root, fallback, htmlToAppend, verbose);
         }
 
         if (!routeHasDot) {
@@ -76,13 +76,13 @@ export default ({ root = '.', reload = false, fallback = '', ignores = [], crede
         const ext = uri.split('.').pop();
 
         if (!existsSync(uri)) {
-            return errorResponse(res, pathname, 404);
+            return errorResponse(res, pathname, 404, verbose);
         }
 
         readFile(uri, 'binary', (err, file) => {
             return err
-                ? errorResponse(res, pathname, 500)
-                : fileResponse(res, pathname, 200, file, ext, htmlToAppend);
+                ? errorResponse(res, pathname, 500, verbose)
+                : fileResponse(res, pathname, 200, file, ext, htmlToAppend, verbose);
         });
     });
 
@@ -112,17 +112,17 @@ export default ({ root = '.', reload = false, fallback = '', ignores = [], crede
     };
 };
 
-function routeResponse(res, pathname, root, fallback, htmlToAppend) {
+function routeResponse(res, pathname, root, fallback, htmlToAppend, verbose) {
     const fallbackPath = join(root, fallback);
 
     readFile(fallbackPath, 'binary', (err, file) => {
-        if (err) return errorResponse(res, pathname, 500);
+        if (err) return errorResponse(res, pathname, 500, verbose);
         const status = pathname === '/' ? 200 : 301;
-        fileResponse(res, pathname, status, file, 'html', htmlToAppend);
+        fileResponse(res, pathname, status, file, 'html', htmlToAppend, verbose);
     });
 }
 
-function fileResponse(res, pathname, status, file, ext, htmlToAppend) {
+function fileResponse(res, pathname, status, file, ext, htmlToAppend, verbose) {
     let encoding = 'binary';
 
     if (GZIP_EXTS.includes(ext)) {
@@ -134,14 +134,14 @@ function fileResponse(res, pathname, status, file, ext, htmlToAppend) {
 
     res.writeHead(status, { 'Content-Type': MIMES[ext] });
     res.write(file, encoding);
-    logServer(status, pathname);
+    if (verbose) logServer(status, pathname);
     res.end();
 }
 
-function errorResponse(res, pathname, status) {
+function errorResponse(res, pathname, status, verbose) {
     res.writeHead(status);
     res.write(`${status}`);
-    logServer(status, pathname);
+    if (verbose) logServer(status, pathname);
     res.end();
 }
 
