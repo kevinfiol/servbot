@@ -21,16 +21,28 @@ const RELOAD_HTML = `
     </script>
 `;
 
-export default ({ root = '.', reload = false, fallback = '', ignores = [], credentials }) => {
-    root = resolve(root);
-    if (!existsSync(root) || !statSync(root).isDirectory()) {
-        throw Error(`[servbot] Invalid root directory: ${root}`);
+export default ({
+    root = '.',
+    reload = false,
+    fallback = '',
+    ignores = [],
+    credentials,
+    verbose = true
+}) => {
+    const serverRoot = resolve(root);
+    if (!existsSync(serverRoot) || !statSync(serverRoot).isDirectory()) {
+        throw Error(`[servbot] Invalid root directory: ${serverRoot}`);
     }
 
     let internalPort = 8080;
     const protocol = credentials ? 'https://' : 'http://';
     const htmlToAppend = reload ? RELOAD_HTML : '';
     const clients = [];
+
+    process.on('SIGINT', () => {
+        clients.map((res) => res.end());
+        process.exit();
+    });
 
     const createServer = credentials
         ? (listener) => https.createServer(credentials, listener)
@@ -64,7 +76,7 @@ export default ({ root = '.', reload = false, fallback = '', ignores = [], crede
             (fallback && routeHasDot && (ignores.length && !matchesIgnores))
         ) {
             // SPA route
-            return routeResponse(res, pathname, root, fallback, htmlToAppend);
+            return routeResponse(res, pathname, serverRoot, fallback, htmlToAppend);
         }
 
         if (!routeHasDot) {
@@ -72,7 +84,7 @@ export default ({ root = '.', reload = false, fallback = '', ignores = [], crede
             pathname += (isDirectoryRoute ? 'index.html' : '/index.html');
         }
 
-        const uri = join(root, pathname);
+        const uri = join(serverRoot, pathname);
         const ext = uri.split('.').pop();
 
         if (!existsSync(uri)) {
@@ -86,10 +98,38 @@ export default ({ root = '.', reload = false, fallback = '', ignores = [], crede
         });
     });
 
-    process.on('SIGINT', () => {
-        clients.map((res) => res.end());
-        process.exit();
-    });
+    function routeResponse(res, pathname, root, fallback, htmlToAppend) {
+        const fallbackPath = join(root, fallback);
+
+        readFile(fallbackPath, 'binary', (err, file) => {
+            if (err) return errorResponse(res, pathname, 500);
+            const status = pathname === '/' ? 200 : 301;
+            fileResponse(res, pathname, status, file, 'html', htmlToAppend);
+        });
+    }
+
+    function fileResponse(res, pathname, status, file, ext, htmlToAppend) {
+        let encoding = 'binary';
+
+        if (GZIP_EXTS.includes(ext)) {
+            if (ext === 'html' && htmlToAppend) file += htmlToAppend;
+            res.setHeader('Content-Encoding', 'gzip');
+            file = gzipSync(Buffer.from(file, 'binary').toString('utf8'));
+            encoding = 'utf8';
+        }
+
+        res.writeHead(status, { 'Content-Type': MIMES[ext] });
+        res.write(file, encoding);
+        if (verbose) logServer(status, pathname);
+        res.end();
+    }
+
+    function errorResponse(res, pathname, status) {
+        res.writeHead(status);
+        res.write(`${status}`);
+        if (verbose) logServer(status, pathname);
+        res.end();
+    }
 
     return {
         listen: (port) => {
@@ -111,39 +151,6 @@ export default ({ root = '.', reload = false, fallback = '', ignores = [], crede
         }
     };
 };
-
-function routeResponse(res, pathname, root, fallback, htmlToAppend) {
-    const fallbackPath = join(root, fallback);
-
-    readFile(fallbackPath, 'binary', (err, file) => {
-        if (err) return errorResponse(res, pathname, 500);
-        const status = pathname === '/' ? 200 : 301;
-        fileResponse(res, pathname, status, file, 'html', htmlToAppend);
-    });
-}
-
-function fileResponse(res, pathname, status, file, ext, htmlToAppend) {
-    let encoding = 'binary';
-
-    if (GZIP_EXTS.includes(ext)) {
-        if (ext === 'html' && htmlToAppend) file += htmlToAppend;
-        res.setHeader('Content-Encoding', 'gzip');
-        file = gzipSync(Buffer.from(file, 'binary').toString('utf8'));
-        encoding = 'utf8';
-    }
-
-    res.writeHead(status, { 'Content-Type': MIMES[ext] });
-    res.write(file, encoding);
-    logServer(status, pathname);
-    res.end();
-}
-
-function errorResponse(res, pathname, status) {
-    res.writeHead(status);
-    res.write(`${status}`);
-    logServer(status, pathname);
-    res.end();
-}
 
 function log(message, error = false) {
     console.log(`\x1b[1${ error ? ';31' : '' }m[servbot] ${error ? 'ERROR: ' : ''}${message}\x1b[0m`);
