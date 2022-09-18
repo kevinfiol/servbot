@@ -7,17 +7,17 @@ specifiers:
 
 devDependencies:
   dedent-js: 1.0.1
-  flitch: 0.6.7
+  flitch: 0.6.3
   watchlist: 0.3.1
 
 packages:
 
   /dedent-js/1.0.1:
-    resolution: {integrity: sha512-OUepMozQULMLUmhxS95Vudo0jb0UchLimi3+pQ2plj61Fcy8axbP9hbiD4Sz6DPqn6XG3kfmziVfQ1rSys5AJQ==}
+    resolution: {integrity: sha1-vuX7fJ5yfYXf+iRZDRDsGrElUwU=}
     dev: true
 
-  /flitch/0.6.7:
-    resolution: {integrity: sha512-gVYp2wZGCZZcRATSyfRhBCRqh3DeWOdbeRzjnXiV7xOFl7e4pLvJ0rvzSnCmQ/sLCNntgw09ByOTMjIlsCnzIQ==}
+  /flitch/0.6.3:
+    resolution: {integrity: sha512-K+fO/ag3g5gSg1p8V7rLiNbGjJYb+SDveBxItKJ5HWVtCp2Q2hJA+9tLYkP9mBJsbE3RMJ1AUqncDPJTc8swUQ==}
     engines: {node: '>=14.x'}
     dev: true
 

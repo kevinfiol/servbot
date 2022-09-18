@@ -1,6 +1,6 @@
 {
     "name": "servbot",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "author": "kevinfiol",
     "license": "MIT",
     "description": "A small dev server script for local static site development",
@@ -14,11 +14,11 @@
         "static": "node ./scripts/runStaticExample.js",
         "spa": "node ./scripts/runSpaExample.js",
         "test": "node test.js",
-        "build": "node ./scripts/transpile.js"
+        "prepare": "node ./scripts/transpile.js"
     },
     "engines": {
         "node": ">=12.x",
-        "pnpm": "7.5.1"
+        "pnpm": "7.x"
     },
     "files": [
         "*.d.ts",
