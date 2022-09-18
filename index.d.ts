@@ -4,6 +4,7 @@ type ServbotOptions = {
     fallback: string;
     ignores: RegExp[];
     credentials?: Record<string, unknown>;
+    verbose: boolean;
 };
 
 type ServbotServer = {
