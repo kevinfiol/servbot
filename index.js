@@ -76,7 +76,7 @@ export default ({
             (fallback && routeHasDot && (ignores.length && !matchesIgnores))
         ) {
             // SPA route
-            return routeResponse(res, pathname, serverRoot, fallback, htmlToAppend);
+            return routeResponse(res, pathname);
         }
 
         if (!routeHasDot) {
@@ -94,21 +94,21 @@ export default ({
         readFile(uri, 'binary', (err, file) => {
             return err
                 ? errorResponse(res, pathname, 500)
-                : fileResponse(res, pathname, 200, file, ext, htmlToAppend);
+                : fileResponse(res, pathname, 200, file, ext);
         });
     });
 
-    function routeResponse(res, pathname, root, fallback, htmlToAppend) {
-        const fallbackPath = join(root, fallback);
+    function routeResponse(res, pathname) {
+        const fallbackPath = join(serverRoot, fallback);
 
         readFile(fallbackPath, 'binary', (err, file) => {
             if (err) return errorResponse(res, pathname, 500);
             const status = pathname === '/' ? 200 : 301;
-            fileResponse(res, pathname, status, file, 'html', htmlToAppend);
+            fileResponse(res, pathname, status, file, 'html');
         });
     }
 
-    function fileResponse(res, pathname, status, file, ext, htmlToAppend) {
+    function fileResponse(res, pathname, status, file, ext) {
         let encoding = 'binary';
 
         if (GZIP_EXTS.includes(ext)) {
